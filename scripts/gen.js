@@ -1,0 +1,55 @@
+﻿const fs = require("fs");
+const c = fs.readFileSync("lib/utils.ts", "utf8");
+const rows = [
+  ["mini-p1","minimercado-1","Minimercado La Esquina","Arroz Diana 1kg",5200,"Arroz blanco de primera calidad.","minip1",80,"Abarrotes"],
+  ["mini-p2","minimercado-1","Minimercado La Esquina","Aceite Girasol 1L",14500,"Aceite de girasol puro.","minip2",45,"Abarrotes"],
+  ["mini-p3","minimercado-1","Minimercado La Esquina","Leche Entera 1L",4800,"Leche entera pasteurizada.","minip3",60,"Lacteos"],
+  ["mini-p4","minimercado-1","Minimercado La Esquina","Gaseosa 2L",7500,"Gaseosa fria varios sabores.","minip4",50,"Bebidas"],
+  ["mini-p5","minimercado-1","Minimercado La Esquina","Jabon de Bano x3",9800,"Pack 3 jabones con glicerina.","minip5",35,"Aseo"],
+  ["mini-p6","minimercado-1","Minimercado La Esquina","Azucar 1kg",4200,"Azucar blanca refinada.","minip6",70,"Abarrotes"],
+  ["mini-p7","minimercado-1","Minimercado La Esquina","Cafe Sello Rojo 250g",12500,"Cafe molido colombiano.","minip7",40,"Bebidas"],
+  ["mini-p8","minimercado-1","Minimercado La Esquina","Pasta Doria 500g",3800,"Pasta de trigo espagueti.","minip8",55,"Abarrotes"],
+  ["pan-p1","panaderia-1","Panaderia La Espiga Dorada","Pan Artesanal x6",4500,"Pan de masa madre horneado.","panp1",30,"Panaderia"],
+  ["pan-p2","panaderia-1","Panaderia La Espiga Dorada","Croissant x4",8000,"Croissants de mantequilla.","panp2",20,"Panaderia"],
+  ["pan-p3","panaderia-1","Panaderia La Espiga Dorada","Torta de Cumpleanos",65000,"Torta personalizada.","panp3",5,"Reposteria"],
+  ["pan-p4","panaderia-1","Panaderia La Espiga Dorada","Almojabanas x6",5500,"Almojabanas colombianas.","panp4",25,"Panaderia"],
+  ["pan-p5","panaderia-1","Panaderia La Espiga Dorada","Cafe Americano",3500,"Cafe de origen tolimense.","panp5",50,"Bebidas"],
+  ["pan-p6","panaderia-1","Panaderia La Espiga Dorada","Pandebono x6",6000,"Pandebono de queso.","panp6",20,"Panaderia"],
+  ["ropa-p1","ropa-1","Boutique Moda Tolima","Camiseta Basica Hombre",28000,"Camiseta algodon 100%.","ropap1",40,"Ropa"],
+  ["ropa-p2","ropa-1","Boutique Moda Tolima","Jean Slim Mujer",75000,"Jean slim fit mezclilla.","ropap2",25,"Ropa"],
+  ["ropa-p3","ropa-1","Boutique Moda Tolima","Vestido Floral",65000,"Vestido verano estampado.","ropap3",15,"Ropa"],
+  ["ropa-p4","ropa-1","Boutique Moda Tolima","Tenis Deportivos",120000,"Tenis unisex antideslizante.","ropap4",20,"Calzado"],
+  ["ropa-p5","ropa-1","Boutique Moda Tolima","Chaqueta Impermeable",95000,"Chaqueta impermeable capucha.","ropap5",12,"Ropa"],
+  ["ropa-p6","ropa-1","Boutique Moda Tolima","Bolso de Cuero",85000,"Bolso cuero sintetico.","ropap6",10,"Accesorios"],
+  ["ferr-p1","ferreteria-1","Ferreteria El Constructor","Taladro Percutor 500W",185000,"Taladro percutor con brocas.","ferrp1",8,"Herramientas"],
+  ["ferr-p2","ferreteria-1","Ferreteria El Constructor","Pintura Blanca 1 Galon",42000,"Pintura vinilo blanca.","ferrp2",20,"Pinturas"],
+  ["ferr-p3","ferreteria-1","Ferreteria El Constructor","Juego Destornilladores x8",28000,"Set destornilladores.","ferrp3",15,"Herramientas"],
+  ["ferr-p4","ferreteria-1","Ferreteria El Constructor","Martillo Carpintero",22000,"Martillo mango madera.","ferrp4",18,"Herramientas"],
+  ["ferr-p5","ferreteria-1","Ferreteria El Constructor","Cinta Metrica 5m",12000,"Cinta metrica acero.","ferrp5",25,"Herramientas"],
+  ["farm-p1","farmacia-1","Farmacia Salud y Vida","Acetaminofen 500mg x10",4500,"Analgesico y antipiretico.","farmp1",100,"Medicamentos"],
+  ["farm-p2","farmacia-1","Farmacia Salud y Vida","Vitamina C 1000mg x30",18000,"Vitamina C efervescente.","farmp2",60,"Vitaminas"],
+  ["farm-p3","farmacia-1","Farmacia Salud y Vida","Crema Hidratante 200ml",22000,"Crema hidratante con aloe.","farmp3",35,"Cuidado Personal"],
+  ["farm-p4","farmacia-1","Farmacia Salud y Vida","Alcohol Antiseptico 500ml",9800,"Alcohol antiseptico 70%.","farmp4",50,"Primeros Auxilios"],
+  ["farm-p5","farmacia-1","Farmacia Salud y Vida","Ibuprofeno 400mg x10",5200,"Antiinflamatorio analgesico.","farmp5",80,"Medicamentos"],
+  ["papel-p1","papeleria-1","Papeleria El Estudiante","Cuaderno Norma 100 hojas",8500,"Cuaderno cuadriculado.","papelp1",60,"Utiles"],
+  ["papel-p2","papeleria-1","Papeleria El Estudiante","Lapiceros BIC x12",9000,"Caja 12 lapiceros BIC.","papelp2",45,"Utiles"],
+  ["papel-p3","papeleria-1","Papeleria El Estudiante","Resma Papel Carta",22000,"Resma 500 hojas bond.","papelp3",30,"Papeleria"],
+  ["papel-p4","papeleria-1","Papeleria El Estudiante","Colores Faber x24",18500,"Caja 24 colores Faber.","papelp4",25,"Arte"],
+  ["papel-p5","papeleria-1","Papeleria El Estudiante","Mochila Escolar",65000,"Mochila escolar resistente.","papelp5",12,"Accesorios"],
+  ["tech-p1","tecnologia-1","TecnoShop Ibague","Audifonos Bluetooth",85000,"Audifonos inalambricos.","techp1",20,"Tecnologia"],
+  ["tech-p2","tecnologia-1","TecnoShop Ibague","Cargador USB-C 65W",45000,"Cargador rapido USB-C.","techp2",35,"Tecnologia"],
+  ["tech-p3","tecnologia-1","TecnoShop Ibague","Mouse Inalambrico",55000,"Mouse inalambrico ergonomico.","techp3",15,"Tecnologia"],
+  ["tech-p4","tecnologia-1","TecnoShop Ibague","Memoria USB 64GB",32000,"Memoria USB 3.0 64GB.","techp4",40,"Tecnologia"],
+  ["tech-p5","tecnologia-1","TecnoShop Ibague","Parlante Bluetooth 10W",75000,"Parlante portatil resistente.","techp5",12,"Tecnologia"],
+  ["bell-p1","belleza-1","Salon de Belleza Glamour","Shampoo Keratina 500ml",38000,"Shampoo con keratina.","bellp1",25,"Belleza"],
+  ["bell-p2","belleza-1","Salon de Belleza Glamour","Mascarilla Capilar 300g",45000,"Mascarilla hidratante.","bellp2",20,"Belleza"],
+  ["bell-p3","belleza-1","Salon de Belleza Glamour","Esmalte de Unas x6",28000,"Set 6 esmaltes colores.","bellp3",30,"Belleza"],
+  ["bell-p4","belleza-1","Salon de Belleza Glamour","Plancha de Cabello",95000,"Plancha ceramica ajustable.","bellp4",8,"Belleza"],
+  ["bell-p5","belleza-1","Salon de Belleza Glamour","Perfume Floral 50ml",78000,"Perfume floral femenino.","bellp5",12,"Belleza"],
+];
+const lines = rows.map(r =>
+  "  {id:\""+r[0]+"\",storeId:\""+r[1]+"\",storeName:\""+r[2]+"\",nombre:\""+r[3]+"\",precio:"+r[4]+",descripcion:\""+r[5]+"\",imagen:\"https://picsum.photos/seed/"+r[6]+"/400/400\",stock:"+r[7]+",categoria:\""+r[8]+"\",activo:true,createdAt:new Date()}"
+);
+const block = "\n\nexport const DEMO_PRODUCTS = [\n" + lines.join(",\n") + "\n];\n";
+fs.writeFileSync("lib/utils.ts", c + block, "utf8");
+console.log("Done. Products:", rows.length);

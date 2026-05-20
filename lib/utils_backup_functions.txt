@@ -1,0 +1,74 @@
+﻿import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { CATEGORIAS } from "@/lib/types";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export function getCategoryFromSlug(slug: string): string | null {
+  const match = CATEGORIAS.find((category) => slugify(category) === slug);
+  return match ?? null;
+}
+
+export function formatPrice(price: number): string {
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(price);
+}
+
+export function formatDate(date: Date | string): string {
+  const d = typeof date === "string" ? new Date(date) : date;
+  return new Intl.DateTimeFormat("es-CO", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(d);
+}
+
+export function generateWhatsAppMessage(
+  storeName: string,
+  storePhone: string,
+  items: { nombre: string; cantidad: number; precio: number }[],
+  total: number
+): string {
+  const itemsList = items
+    .map((i) => `â€¢ ${i.nombre} x${i.cantidad} - ${formatPrice(i.precio * i.cantidad)}`)
+    .join("\n");
+  const message = `Â¡Hola! Quiero hacer un pedido desde Marketplace Tolima ðŸ›’\n\n*Tienda:* ${storeName}\n\n*Productos:*\n${itemsList}\n\n*Total:* ${formatPrice(total)}\n\nÂ¿EstÃ¡ disponible?`;
+  return `https://wa.me/${storePhone.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
+}
+
+export function getStatusColor(status: string): string {
+  const colors: Record<string, string> = {
+    pendiente: "bg-yellow-100 text-yellow-800",
+    confirmado: "bg-blue-100 text-blue-800",
+    entregado: "bg-green-100 text-green-800",
+    cancelado: "bg-red-100 text-red-800",
+  };
+  return colors[status] || "bg-gray-100 text-gray-800";
+}
+
+export function getStatusLabel(status: string): string {
+  const labels: Record<string, string> = {
+    pendiente: "Pendiente",
+    confirmado: "Confirmado",
+    entregado: "Entregado",
+    cancelado: "Cancelado",
+  };
+  return labels[status] || status;
+}
+
