@@ -16,6 +16,17 @@ export function slugify(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
+/**
+ * Normaliza un texto para búsqueda: minúsculas + sin tildes/acentos.
+ * Permite que "cafe" encuentre "Café", "PAN" encuentre "panadería", etc.
+ */
+export function normalizeSearch(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, ""); // elimina diacríticos (tildes, diéresis, etc.)
+}
+
 export function getCategoryFromSlug(slug: string): string | null {
   const match = CATEGORIAS.find((category) => slugify(category) === slug);
   return match ?? null;

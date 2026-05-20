@@ -64,7 +64,7 @@ export function mockRegister(
   saveUsers(users);
   saveSession(uid);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   const { password: _, ...userWithoutPass } = user;
   return userWithoutPass;
 }
@@ -78,7 +78,7 @@ export function mockLogin(email: string, password: string): User {
   }
 
   saveSession(user.id);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   const { password: _, ...userWithoutPass } = user;
   return userWithoutPass;
 }
@@ -93,7 +93,7 @@ export function mockGetCurrentUser(): User | null {
   const users = getUsers();
   const user = users[uid];
   if (!user) return null;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   const { password: _, ...userWithoutPass } = user;
   return userWithoutPass;
 }

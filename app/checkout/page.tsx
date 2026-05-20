@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, CreditCard, Smartphone, Banknote, Truck,
-  CheckCircle, Copy, MessageCircle, ShieldCheck
+  CheckCircle, Copy, MessageCircle, ShieldCheck, Lock
 } from "lucide-react";
 import { useCart } from "@/lib/context/CartContext";
 import { useAuth } from "@/lib/context/AuthContext";
@@ -38,20 +39,64 @@ const METHODS = [
 
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const router = useRouter();
   const [method, setMethod] = useState<PayMethod>("nequi");
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [comprobante, setComprobante] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loadingConfirm, setLoadingConfirm] = useState(false);
+
+  // Protección de ruta: redirigir si no está autenticado
+  useEffect(() => {
+    if (!loading && !user) {
+      toast.error("Debes iniciar sesión para finalizar tu compra.");
+      router.replace("/login/comprador?redirect=/checkout");
+    }
+  }, [user, loading, router]);
+
+  // Mostrar spinner mientras se verifica la sesión
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Bloqueo visual mientras redirige (usuario no autenticado)
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center max-w-sm mx-auto px-4">
+            <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Lock className="w-8 h-8 text-yellow-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Acceso restringido</h2>
+            <p className="text-gray-500 mb-6">Debes iniciar sesión para finalizar tu compra.</p>
+            <Link href="/login/comprador?redirect=/checkout">
+              <Button variant="primary" size="lg" className="w-full">Iniciar sesión</Button>
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   const handleConfirm = async () => {
     if (method !== "contraentrega" && !comprobante.trim()) {
       toast.error("Ingresa el número de comprobante o referencia");
       return;
     }
-    setLoading(true);
+    setLoadingConfirm(true);
     await new Promise((r) => setTimeout(r, 1200));
-    setLoading(false);
+    setLoadingConfirm(false);
     setStep(3);
     clearCart();
     toast.success("¡Pedido confirmado!");
@@ -316,7 +361,7 @@ export default function CheckoutPage() {
                       variant="primary"
                       size="lg"
                       className="w-full"
-                      loading={loading}
+                      loading={loadingConfirm}
                       onClick={handleConfirm}
                       icon={<CheckCircle className="w-5 h-5" />}
                     >

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Trash2, Plus, Minus, MessageCircle, ArrowLeft, Package } from "lucide-react";
 import { useCart } from "@/lib/context/CartContext";
@@ -11,11 +12,22 @@ import { formatPrice, generateWhatsAppMessage } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import toast from "react-hot-toast";
 
 export default function CarritoPage() {
   const { items, removeItem, updateQuantity, clearCart, total, itemCount } = useCart();
   const { user } = useAuth();
+  const router = useRouter();
   const [checkoutMode, setCheckoutMode] = useState(false);
+
+  const handleGoToCheckout = () => {
+    if (!user) {
+      toast.error("Debes iniciar sesión para finalizar tu compra.");
+      router.push("/login/comprador?redirect=/checkout");
+      return;
+    }
+    router.push("/checkout");
+  };
 
   // Agrupar items por tienda
   const byStore = items.reduce((acc, item) => {
@@ -174,11 +186,15 @@ export default function CarritoPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <Link href="/checkout" className="block">
-                      <Button variant="primary" size="lg" className="w-full" icon={<MessageCircle className="w-5 h-5" />}>
-                        Ir al checkout
-                      </Button>
-                    </Link>
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      className="w-full"
+                      icon={<MessageCircle className="w-5 h-5" />}
+                      onClick={handleGoToCheckout}
+                    >
+                      Ir al checkout
+                    </Button>
                     <Link href="/" className="block">
                       <Button variant="outline" size="md" className="w-full">
                         Seguir comprando

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff, ShoppingBag } from "lucide-react";
 import { loginUser } from "@/lib/services/auth.service";
@@ -11,8 +11,10 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import toast from "react-hot-toast";
 
-export default function LoginCompradorPage() {
+function LoginCompradorForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") ?? "/";
   const { setUserDirectly } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPass, setShowPass] = useState(false);
@@ -40,7 +42,7 @@ export default function LoginCompradorPage() {
       }
       setUserDirectly(user);
       toast.success(`¡Bienvenido, ${user.nombre.split(" ")[0]}!`);
-      router.push("/");
+      router.push(redirectTo);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "";
       if (msg.includes("user-not-found") || msg.includes("wrong-password") || msg.includes("invalid-credential")) {
@@ -117,5 +119,19 @@ export default function LoginCompradorPage() {
         </div>
       </div>
     </motion.div>
+  );
+}
+
+export default function LoginCompradorPage() {
+  return (
+    <Suspense fallback={
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl p-8 flex items-center justify-center h-64">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    }>
+      <LoginCompradorForm />
+    </Suspense>
   );
 }

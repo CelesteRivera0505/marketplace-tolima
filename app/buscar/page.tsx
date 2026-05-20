@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { StoreCard } from "@/components/marketplace/StoreCard";
 import { ProductCard } from "@/components/marketplace/ProductCard";
-import { DEMO_PRODUCTS, DEMO_STORES, slugify } from "@/lib/utils";
+import { DEMO_PRODUCTS, DEMO_STORES, slugify, normalizeSearch } from "@/lib/utils";
 import { Product, Store } from "@/lib/types";
 import { Search, AlertCircle, SlidersHorizontal } from "lucide-react";
 import { CATEGORIAS } from "@/lib/types";
@@ -18,22 +18,31 @@ function SearchContent() {
   const filteredProducts = useMemo(() => {
     let results = DEMO_PRODUCTS as Product[];
     if (category) results = results.filter((p) => p.categoria.toLowerCase() === category.toLowerCase());
-    if (query) results = results.filter((p) =>
-      p.nombre.toLowerCase().includes(query.toLowerCase()) ||
-      p.descripcion.toLowerCase().includes(query.toLowerCase()) ||
-      (p.storeName?.toLowerCase() || "").includes(query.toLowerCase())
-    );
+    if (query) {
+      const q = normalizeSearch(query);
+      results = results.filter((p) =>
+        normalizeSearch(p.nombre).includes(q) ||
+        normalizeSearch(p.descripcion).includes(q) ||
+        normalizeSearch(p.storeName ?? "").includes(q) ||
+        normalizeSearch(p.categoria).includes(q)
+      );
+    }
     return results;
   }, [category, query]);
 
   const filteredStores = useMemo(() => {
     let results = DEMO_STORES as Store[];
     if (category) results = results.filter((s) => s.categoria.toLowerCase() === category.toLowerCase());
-    if (query) results = results.filter((s) =>
-      s.nombre.toLowerCase().includes(query.toLowerCase()) ||
-      s.descripcion.toLowerCase().includes(query.toLowerCase()) ||
-      s.ciudad.toLowerCase().includes(query.toLowerCase())
-    );
+    if (query) {
+      const q = normalizeSearch(query);
+      results = results.filter((s) =>
+        normalizeSearch(s.nombre).includes(q) ||
+        normalizeSearch(s.descripcion).includes(q) ||
+        normalizeSearch(s.ciudad).includes(q) ||
+        normalizeSearch(s.categoria).includes(q) ||
+        (s.tags ?? []).some((tag) => normalizeSearch(tag).includes(q))
+      );
+    }
     return results;
   }, [category, query]);
 
